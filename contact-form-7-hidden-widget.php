@@ -29,12 +29,12 @@ function cf7_hw_data_admin_notice() {
         }
         // If CF7 version is < 3.9.0
         if ( $wpcf7_version < 390 ) {
-            echo '<div class="error"><p><strong>'. _x('Warning:', 'contact-form-7-hidden-widget') . '</strong> '. _x('Contact Form 7 - Hidden Widget requires that you have the latest version of Contact Form 7 installed. Please upgrade now', 'contact-form-7-hidden-widget') .'</p></div>';
+            echo '<div class="error"><p><strong>'. __('Warning:', 'contact-form-7-hidden-widget') . '</strong> '. __('Contact Form 7 - Hidden Widget requires that you have the latest version of Contact Form 7 installed. Please upgrade now', 'contact-form-7-hidden-widget') .'</p></div>';
         }
     }
     // If it's not installed and activated, throw an error
     else {
-        echo '<div class="error"><p>' . _x('Contact Form 7 is not activated. The Contact Form 7 Plugin must be installed and activated before you can use Contact Form 7 - Hidden Widget', 'contact-form-7-hidden-widget') .'</p></div>';
+        echo '<div class="error"><p>' . __('Contact Form 7 is not activated. The Contact Form 7 Plugin must be installed and activated before you can use Contact Form 7 - Hidden Widget', 'contact-form-7-hidden-widget') .'</p></div>';
     }
 }
 add_action('admin_notices', 'cf7_hw_data_admin_notice');
@@ -53,9 +53,9 @@ class Widget_CF7HW extends WP_Widget {
     public function __construct() {
         // Instantiate the parent object
         parent::__construct( 'cc7_hw',
-            _x('Contact Form 7 - Hidden Widget', 'contact-form-7-hidden-widget'),
+            __('Contact Form 7 - Hidden Widget', 'contact-form-7-hidden-widget'),
         array(
-            'description' => _x('Widget with hidden content that are show when a selected Contact Form 7 is submitted', 'contact-form-7-hidden-widget'),
+            'description' => __('Widget with hidden content that are show when a selected Contact Form 7 is submitted', 'contact-form-7-hidden-widget'),
             'classname' => 'cc7_hw_widget'
             ));
     } 
@@ -78,7 +78,7 @@ class Widget_CF7HW extends WP_Widget {
         $c7forms = new WP_Query(array( 'post_type'=> 'wpcf7_contact_form'));
         
         //Register a select input for forms cc7
-        $html = "<p><label>" . _x('Select one Contact Form 7\'s form:', 'contact-form-7-hidden-widget') . "</label><select id='". esc_attr( $this->get_field_id( 'formID' ) ). "' class='widefat' name='" . esc_attr($this->get_field_name('formID')) . "'>";
+        $html = "<p><label>" . __('Select one Contact Form 7\'s form:', 'contact-form-7-hidden-widget') . "</label><select id='". esc_attr( $this->get_field_id( 'formID' ) ). "' class='widefat' name='" . esc_attr($this->get_field_name('formID')) . "'>";
 
         //Construct option of forms to select
         foreach ($c7forms->posts as $key => $value) {
@@ -90,15 +90,15 @@ class Widget_CF7HW extends WP_Widget {
         $html .= "</select></p>";
 
         //Register a select input for forms cc7
-        $html .= "<p><label>" . _x('Select form event to trigger:', 'contact-form-7-hidden-widget') . "</label><select id='". esc_attr( $this->get_field_id( 'formEvent' ) ). "' class='widefat' name='" . esc_attr($this->get_field_name('formEvent')) . "'>";
+        $html .= "<p><label>" . __('Select form event to trigger:', 'contact-form-7-hidden-widget') . "</label><select id='". esc_attr( $this->get_field_id( 'formEvent' ) ). "' class='widefat' name='" . esc_attr($this->get_field_name('formEvent')) . "'>";
 
         //Define Contact Form 7 DOM Events
         $cc7JsEvents = array(
-            'wpcf7invalid' => _x('Invalid Input\'s', 'contact-form-7-hidden-widget'), 
-            'wpcf7spam' => _x('Spam', 'contact-form-7-hidden-widget'), 
-            'wpcf7mailsent' => _x('Mail Sent', 'contact-form-7-hidden-widget'), 
-            'wpcf7mailfailed' => _x('Mail Failed', 'contact-form-7-hidden-widget'), 
-            'wpcf7submit' => _x('Complete Success', 'contact-form-7-hidden-widget'));
+            'wpcf7invalid' => __('Invalid Input\'s', 'contact-form-7-hidden-widget'), 
+            'wpcf7spam' => __('Spam', 'contact-form-7-hidden-widget'), 
+            'wpcf7mailsent' => __('Mail Sent', 'contact-form-7-hidden-widget'), 
+            'wpcf7mailfailed' => __('Mail Failed', 'contact-form-7-hidden-widget'), 
+            'wpcf7submit' => __('Complete Success', 'contact-form-7-hidden-widget'));
 
         //Construct option of forms to select
         foreach ($cc7JsEvents as $key => $value) {
@@ -112,23 +112,23 @@ class Widget_CF7HW extends WP_Widget {
         wp_reset_query(); //Reset current Query
 
         //Register a select input for forms cc7
-        $html .= "<p><label>" . _x('Content to show when trigger occurred success:', 'contact-form-7-hidden-widget') . "</label><textarea id='". esc_attr( $this->get_field_id( 'formContent' ) ). "' class='widefat' rows='10' cols='20' name='" . esc_attr($this->get_field_name('formContent')) . "'>" . $content .  "</textarea></p>";
+        $html .= "<p><label>" . __('Content to show when trigger occurred success:', 'contact-form-7-hidden-widget') . "</label><textarea id='". esc_attr( $this->get_field_id( 'formContent' ) ). "' class='widefat' rows='10' cols='20' name='" . esc_attr($this->get_field_name('formContent')) . "'>" . $content .  "</textarea></p>";
 
         $html.= "<div style='display:block;padding:10px;background-color: #deebf1;position:relative;margin-bottom:15px;'>
 
-            <p style='margin-top:0px;font-size:11px;'>". _x('Developed by ', 'contact-form-7-hidden-widget') . "Iran Alves [https://github.com/iranalves85], " . _x('Thank you for using my plugin!', 'contact-form-7-hidden-widget') .
-            "</p><p style='margin-top:0px;font-size:11px;'>" .  _x('If this plugin helped you in any way, pay me a coffee or evaluate the plugin in the repository of Wordpress plugins, thank you immensely.', 'contact-form-7-hidden-widget') . " <strong>". _x('Wordpress is love!', 'contact-form-7-hidden-widget') ."</strong>
+            <p style='margin-top:0px;font-size:11px;'>". __('Developed by ', 'contact-form-7-hidden-widget') . "Iran Alves [https://github.com/iranalves85], " . __('Thank you for using my plugin!', 'contact-form-7-hidden-widget') .
+            "</p><p style='margin-top:0px;font-size:11px;'>" .  __('If this plugin helped you in any way, pay me a coffee or evaluate the plugin in the repository of Wordpress plugins, thank you immensely.', 'contact-form-7-hidden-widget') . " <strong>". __('Wordpress is love!', 'contact-form-7-hidden-widget') ."</strong>
                 <span style='color: #999;'>"
-                . _x('Are you looking for a developer for your project?', 'contact-form-7-hidden-widget') . "<strong>iranjosealves@gmail.com</strong> | <a target='_blank' href='https://makingpie.com.br'>makingpie.com.br</a>
+                . __('Are you looking for a developer for your project?', 'contact-form-7-hidden-widget') . "<strong>iranjosealves@gmail.com</strong> | <a target='_blank' href='https://makingpie.com.br'>makingpie.com.br</a>
                 </span>
             </p>
 
             <a href='https://goo.gl/dN6U3T'
                 target='_blank' class='button button-primary link'>"
-            . _x('Donate', 'contact-form-7-hidden-widget') .
+            . __('Donate', 'contact-form-7-hidden-widget') .
             "</a>
             <a href='#' target='_blank' class='button link'>"
-            . _x('Rate my plugin', 'contact-form-7-hidden-widget') .
+            . __('Rate my plugin', 'contact-form-7-hidden-widget') .
             "</a>
         </div>";
         
@@ -191,6 +191,7 @@ class Widget_CF7HW extends WP_Widget {
 	}
 }
 
+
 /**
  * Action do add javascript function in page footer with content
  * 
@@ -227,3 +228,12 @@ function cf7_hw_register_widgets() {
     register_widget('Widget_CF7HW'); 
 }
 add_action('widgets_init', 'cf7_hw_register_widgets');
+
+function cf7_hw_register_init() {
+    /* The directory where the file is located */
+    $plugin_dir = basename( dirname( __FILE__ ) ) . '/languages';
+    /* Load file with translation*/
+    load_plugin_textdomain('contact-form-7-hidden-widget', false, $plugin_dir);
+}
+add_action('plugins_loaded', 'cf7_hw_register_init');
+

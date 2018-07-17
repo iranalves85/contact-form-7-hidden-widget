@@ -58,6 +58,9 @@ class Widget_CF7HW extends WP_Widget {
             'description' => __('Widget with hidden content that are show when a selected Contact Form 7 is submitted', 'contact-form-7-hidden-widget'),
             'classname' => 'cc7_hw_widget'
             ));
+
+        //Defined content
+        $GLOBALS['cc7_hw_widget_content'] = array();
     } 
     
     /**
@@ -170,25 +173,38 @@ class Widget_CF7HW extends WP_Widget {
 	 */
 	public function widget($args, $instance) {
 
-        //Defined content
-        $GLOBALS['cc7_hw_widget_content']  = (!empty($instance['formContent']))? apply_filters('the_content', $instance['formContent']) : '';
-        $event      = (!empty($instance['formEvent']))? $instance['formEvent'] : 'wpcf7submit';
-        $id         = (!empty($instance['formID']))? $instance['formID'] : 0;
+        global $cc7_hw_widget_content;
 
-        //Construct javascript vars
-        $scriptVars = "
-        <script>
-            var cc7_hw_event = '$event';
-            var cc7_hw_id = '$id';
-        </script>
-        ";
-
-        //Add custom content after title widget
-        $args['after_title'] .= $scriptVars;
+        //Format array with contents
+        $cc7_hw_widget_content[] = cf7_hw_format_array_content($args, $instance);
 
         //Draw widget in frontend
-        echo $args['before_widget'] . $args['after_title'] .  $args['after_widget'];
+        _e($args['before_widget'] . $args['after_title'] .  $args['after_widget']);
 	}
+}
+
+/**
+ * Format global array to multiple widgets contents
+ * 
+ * @since 0.1 
+ * @return array Return array key 'id' with another array ('event', 'content')
+ */
+function cf7_hw_format_array_content($args, $instance) {
+    
+    //Define array
+    $array = [];
+
+    //ID key
+    $array['id'] = (!empty($instance['formID']))? (int) $instance['formID'] : false;
+    //Event key
+    $array['event'] = (!empty($instance['formEvent']))? esc_attr($instance['formEvent']) : '';
+    //Widget ID key
+    $array['widget_id'] = (!empty($args['widget_id']))? esc_attr($args['widget_id']) : '';
+    //Content key
+    $array['content'] = (!empty($instance['formContent']))? apply_filters('the_content', $instance['formContent']) : '';
+
+    return $array;
+
 }
 
 
@@ -200,24 +216,17 @@ class Widget_CF7HW extends WP_Widget {
 function cf7_hw_form_submitted() {
 
     global $cc7_hw_widget_content;
+    $jsonString = wp_json_encode($cc7_hw_widget_content);
 
-    ?>
-        <script>
-            /* 
-            ** Contact Form 7 - Hidden Widget 
-            ** Get widget element DOM and add content when a event is fired
-            */
-            document.addEventListener( cc7_hw_event, function( event ) {
-                if(event.detail.contactFormId == cc7_hw_id ){                    
-                    $widgetElement = document.querySelector('.widget.cc7_hw_widget');
-                    $widgetElement.innerHTML = `<?php _e($cc7_hw_widget_content); ?>`;
+    $registerScript = wp_register_script('cc7_hw_scripts', plugin_dir_url(__FILE__) . 'assets/cc7_hw_scripts.js', array(), '0.1', true);
 
-                }
-            }, false );
+    if ($cc7_hw_widget_content && $registerScript) {
+        
+        _e("<script type='text/javascript'>var cc7_hw_widget_content = " . $jsonString . ";</script>");
 
-        </script>
+        wp_enqueue_script('cc7_hw_scripts', plugin_dir_url(__FILE__) . 'assets/cc7_hw_scripts.js', array(), '0.1', true);
+    }
 
-    <?php
 }
 add_action('wp_footer', 'cf7_hw_form_submitted');
 
